@@ -23,7 +23,7 @@ export default new Vuex.Store({
         applied_Attributes: "appliedAttributes",
         images: "images"
       }
-       return await axios.get("http://www.mocky.io/v2/5d6de07e30000048c38fbc9b", {params: payload}).then(response => response.data)
+       return await axios.get("http://www.mocky.io/v2/5d77a2293200005a00923f49", {params: payload}).then(response => response.data)
     }
 
   }
