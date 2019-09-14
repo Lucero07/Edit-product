@@ -40,7 +40,7 @@
 									<v-text-field v-model="product.long_name" :disabled="isUpdating" outline label="Nombre"></v-text-field>
 									<v-text-field v-model="product.model" :disabled="isUpdating" outline label="Modelo"></v-text-field>
 									<v-text-field v-model="product.brand" :disabled="isUpdating" outline label="Marca"></v-text-field>
-									<v-textarea name="input-4-1" label="Descripcion" :value="product.plain_description" outlined></v-textarea>
+									<v-textarea name="input-4-1" label="Descripcion" v-model="product.plain_description" outlined></v-textarea>
 							</v-form>
 							</v-col>
 							<v-col cols="4">
@@ -87,8 +87,8 @@
 								<h2>Atributos</h2>
 								<v-form >
 									<v-row>
-										<v-col cols="3" v-for="attribute in product.applied_attributes" :key="attribute.id">
-											<v-text-field  :value="attribute.value" outline :label="attribute.name"></v-text-field>
+										<v-col cols="3" v-for="(attribute) in product.applied_attributes" :key="attribute.id">
+											<v-text-field v-model="attribute.value" outline :label="attribute.name"></v-text-field>
 										</v-col>
 									</v-row>
 								</v-form>
@@ -107,13 +107,13 @@ import { debounce } from "lodash"
 
 	export default {
 		data: () => ({
-				product: {},
-				isUpdating: false,
-				baseProduct: {},
-				tabsProduct: "general",
-				components: [],
-				showSave: false,
-				
+			product: {},
+			isUpdating: false,
+			baseProduct: {},
+			tabsProduct: "general",
+			components: [],
+			showSave: false,
+			
 		}),
 		computed: {
 		},
@@ -121,18 +121,14 @@ import { debounce } from "lodash"
 			this.$store.dispatch("GET_PRODUCT").then(response => {
 			this.initialize(response)
 			})
-			
 		},
 
 		watch: {
-			
 			product: {
-				handler: debounce(function(e) {
-					const dataPro = Object.assign({},this.baseProduct)					
-					let valuesProduct =JSON.stringify(this.product)
-					let valuesBaseProduct =JSON.stringify(dataPro)
+				handler: debounce(function(e) {			
+					let valuesBaseProduct = JSON.stringify(this.product)
 					
-					if (valuesProduct == valuesBaseProduct){
+					if (this.baseProduct == valuesBaseProduct){
 						this.showSave = false
 					} else {
 						this.showSave = true
@@ -142,8 +138,6 @@ import { debounce } from "lodash"
 				),
 				deep: true
 			},
-			
-			
 			isUpdating (val) {
 				if (val) {
 					setTimeout(() => (this.isUpdating = false), 500)
@@ -153,12 +147,9 @@ import { debounce } from "lodash"
 
 		methods: {
 			initialize(dataProduct) {
-				const dataPro = Object.assign({},dataProduct)
 				this.product = Object.assign({}, dataProduct.product)
-				this.baseProduct = dataPro.product
-				
-			},
-			
+				this.baseProduct = JSON.stringify(Object.assign({},dataProduct.product))				
+			},			
 			remove (item) {
 				const index = this.friends.indexOf(item.name)
 				if (index >= 0) this.friends.splice(index, 1)
